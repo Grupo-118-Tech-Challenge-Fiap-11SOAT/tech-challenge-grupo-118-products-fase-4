@@ -2,7 +2,7 @@
 
 services:
   mongodb:
-    image: mongo:6.0
+    image: mongo:7.0
     container_name: mongodb-products
     restart: always
     ports:
@@ -12,7 +12,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: admin123
       MONGO_INITDB_DATABASE: products-db
     volumes:
-      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - mongo_data:/data/db
 
 volumes:
