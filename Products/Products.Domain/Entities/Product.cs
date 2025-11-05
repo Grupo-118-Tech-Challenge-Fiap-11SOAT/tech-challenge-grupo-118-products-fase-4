@@ -29,7 +29,9 @@ public abstract class Product
     [BsonElement("updatedAt")]
     public DateTimeOffset UpdatedAt { get; set; }
 
-    public Product(string name,
+    public Product(
+        ObjectId id,
+        string name,
         decimal price,
         bool isActive,
         DateTimeOffset createdAt,
@@ -37,11 +39,28 @@ public abstract class Product
         List<ImageProduct>? images = null
         )
     {
+        Id = id;
         Name = name;
         Price = price;
         IsActive = isActive;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
+
+        Images = images ?? new List<ImageProduct>();
+    }
+
+    public Product(
+        string name,
+        decimal price,
+        bool isActive,
+        List<ImageProduct>? images = null
+        )
+    {
+        Name = name;
+        Price = price;
+        IsActive = isActive;
+        CreatedAt = DateTime.Now;
+        UpdatedAt = DateTime.Now;
 
         Images = images ?? new List<ImageProduct>();
     }

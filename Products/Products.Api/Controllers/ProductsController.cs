@@ -12,11 +12,13 @@ namespace WebApplication1.Controllers
     {
         private readonly ILogger<ProductsController> _logger;
         private readonly IGetProductByIdUseCase _getProductByIdUseCase;
+        private readonly IGetProductByTypeUseCase _getProductByTypeUseCase;
 
-        public ProductsController(ILogger<ProductsController> logger, IGetProductByIdUseCase getProductByIdUseCase)
+        public ProductsController(ILogger<ProductsController> logger, IGetProductByIdUseCase getProductByIdUseCase, IGetProductByTypeUseCase getProductByTypeUseCase)
         {
             _logger = logger;
             _getProductByIdUseCase = getProductByIdUseCase;
+            _getProductByTypeUseCase = getProductByTypeUseCase;
         }
 
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
@@ -27,6 +29,17 @@ namespace WebApplication1.Controllers
         public async Task<Result<ProductDto?>> GetAsync(string productId, CancellationToken cancellationToken)
         {
             var result = await _getProductByIdUseCase.ExecuteAsync(productId, cancellationToken);
+            return result;
+        }
+
+        [HttpGet("type/{category}")]
+        [ProducesResponseType(typeof(List<ProductDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [AllowAnonymous]
+        public async Task<Result<List<ProductDto>?>> GetByTypeAsync(string category, CancellationToken cancellationToken)
+        {
+            var result = await _getProductByTypeUseCase.ExecuteAsync(category, cancellationToken);
             return result;
         }
     }

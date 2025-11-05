@@ -11,14 +11,15 @@ public class ProductDto
     public List<ImageProduct> Images { get; set; }
     public bool IsActive { get; set; }
 
-    public ProductDto(string name, decimal price, bool isActive)
+    public ProductDto(string name, decimal price, bool isActive, List<ImageProduct> images)
     {
         Name = name;
         Price = price;
         IsActive = isActive;
+        Images = images;
     }
 
-    public ProductDto(ObjectId id, string name, decimal price, List<ImageProduct> images, bool isActive)
+    public ProductDto(ObjectId id, string name, decimal price, bool isActive, List<ImageProduct> images)
     {
         Id = id;
         Name = name;

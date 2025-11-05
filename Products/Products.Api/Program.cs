@@ -3,6 +3,9 @@ using Products.Application.UseCases.Interfaces;
 using Products.Infra.DataBase.Contexts;
 using Products.Infra.DataBase.Repositories;
 using Products.Infra.DataBase.Repositories.Interfaces;
+using System.Diagnostics.CodeAnalysis;
+
+[assembly: ExcludeFromCodeCoverage]
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +23,9 @@ builder.Services.Configure<MongoDbSettings>(
 builder.Services.AddSingleton<MongoDbContext>();
 
 builder.Services.AddScoped<IGetProductByIdUseCase, GetProductByIdUseCase>();
+builder.Services.AddScoped<IGetProductByTypeUseCase, GetProductByTypeUseCase>();
+
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
-
-
 
 
 var app = builder.Build();
