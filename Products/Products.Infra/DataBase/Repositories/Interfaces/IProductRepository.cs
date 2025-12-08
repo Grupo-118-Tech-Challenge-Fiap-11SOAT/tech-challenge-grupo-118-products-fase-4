@@ -8,4 +8,6 @@ public interface IProductRepository
     Task<Product?> GetProductByIdAsync(string id, CancellationToken cancellationToken = default);
 
     Task<List<Product>?> GetProductByTypeAsync(string type, CancellationToken cancellationToken = default);
+
+    Task<Product> CreateProductAsync(Product product, CancellationToken cancellationToken = default);
 }

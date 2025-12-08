@@ -29,7 +29,7 @@ public abstract class Product
     [BsonElement("updatedAt")]
     public DateTimeOffset UpdatedAt { get; set; }
 
-    public Product(
+    internal Product(
         ObjectId id,
         string name,
         decimal price,
@@ -49,7 +49,7 @@ public abstract class Product
         Images = images ?? new List<ImageProduct>();
     }
 
-    public Product(
+    internal Product(
         string name,
         decimal price,
         bool isActive,
@@ -76,6 +76,8 @@ public class ImageProduct
 
     private readonly Regex _imageRegex = new Regex(@"(\W)(jpg|jpeg|png|gif|webp)", RegexOptions.Compiled);
 
+    public ImageProduct() { }
+
     public ImageProduct(int positon, string url)
     {
         Position = positon;
@@ -87,9 +89,6 @@ public class ImageProduct
 
     private void CheckImageUrlFormat()
     {
-        if (!Uri.IsWellFormedUriString(this.Url, UriKind.Absolute))
-            throw new Exception("Invalid Url.");
-
         if (!_imageRegex.IsMatch(this.Url))
             throw new("The provided URL is not valid format.");
     }

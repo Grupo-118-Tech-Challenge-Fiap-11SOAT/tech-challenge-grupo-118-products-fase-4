@@ -1,6 +1,7 @@
 ﻿using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.UseCases.Interfaces;
+using Products.Domain.Entities;
 using Products.Infra.DataBase.Repositories.Interfaces;
 using System.Net;
 
@@ -17,16 +18,29 @@ public class GetProductByIdUseCase : IGetProductByIdUseCase
 
     public async Task<Result<ProductDto?>> ExecuteAsync(string id, CancellationToken cancellationToken = default)
     {
-        Result<ProductDto?> result = new Result<ProductDto?>();
+        Result<ProductDto> result = new();
 
-        var persistedProduct = await _productRepository.GetProductByIdAsync(id, cancellationToken);
+        try
+        {
+            var product = await _productRepository.GetProductByIdAsync(id);
 
-        if (persistedProduct == null)       
-            return result.Fail("Product not found", HttpStatusCode.NotFound);
+            if (product is null)
+                return result.Fail("Product not found", HttpStatusCode.NotFound);
 
-        ProductDto product = new ProductDto(persistedProduct.Id, 
-            persistedProduct.Name, persistedProduct.Price, persistedProduct.IsActive, persistedProduct.Images);
+            ProductDto dto = product switch
+            {
+                Snack s => new SnackDto(s.Id, s.Name, s.Price, s.IsActive, s.Images, s.Ingredients),
+                Accompaniment a => new AccompanimentDto(a.Id, a.Name, a.Price, a.IsActive, a.Images, a.Size),
+                Dessert d => new DessertDto(d.Id, d.Name, d.Price, d.IsActive, d.Images, d.PortionSize),
+                Drink dr => new DrinkDto(dr.Id, dr.Name, dr.Price, dr.IsActive, dr.Images, dr.Size, dr.Flavor),
+                _ => throw new NotSupportedException("Unsupported product type")
+            };
 
-        return result.Ok(product, HttpStatusCode.OK);
+            return result.Ok(dto, HttpStatusCode.OK);
+        }
+        catch (Exception)
+        {
+            return result.Fail("Internal Error", HttpStatusCode.InternalServerError);
+        }
     }
 }

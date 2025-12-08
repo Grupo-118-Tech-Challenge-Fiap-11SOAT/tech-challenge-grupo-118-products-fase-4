@@ -13,16 +13,19 @@ namespace WebApplication1.Controllers
         private readonly ILogger<ProductsController> _logger;
         private readonly IGetProductByIdUseCase _getProductByIdUseCase;
         private readonly IGetProductByTypeUseCase _getProductByTypeUseCase;
+        private readonly ICreateProductUseCase _createProductUseCase;
 
-        public ProductsController(ILogger<ProductsController> logger, IGetProductByIdUseCase getProductByIdUseCase, IGetProductByTypeUseCase getProductByTypeUseCase)
+        public ProductsController(ILogger<ProductsController> logger, IGetProductByIdUseCase getProductByIdUseCase, 
+            IGetProductByTypeUseCase getProductByTypeUseCase,
+            ICreateProductUseCase createProductUseCase)
         {
             _logger = logger;
             _getProductByIdUseCase = getProductByIdUseCase;
             _getProductByTypeUseCase = getProductByTypeUseCase;
+            _createProductUseCase = createProductUseCase;
         }
 
-        [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpGet("{productId}"), ActionName("GetDetailedProduct")]
         [AllowAnonymous]
@@ -32,7 +35,16 @@ namespace WebApplication1.Controllers
             return result;
         }
 
-        [HttpGet("type/{category}")]
+        [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [HttpPost]
+        public async Task<ActionResult<Result<ProductDto>>> PostAsync(CancellationToken cancellationToken, [FromBody] ProductDto productDto)
+        {
+            var result = await _createProductUseCase.ExecuteAsync(productDto, cancellationToken);
+            return StatusCode((int)result.StatusCode, result);
+        }
+
+        [HttpGet("category/{category}")]
         [ProducesResponseType(typeof(List<ProductDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]

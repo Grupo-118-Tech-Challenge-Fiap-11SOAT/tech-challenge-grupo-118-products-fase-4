@@ -36,4 +36,10 @@ public class ProductRepository : IProductRepository
             .Find(filter)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<Product> CreateProductAsync(Product product, CancellationToken cancellationToken = default)
+    {
+        await _context.Products.InsertOneAsync(product);
+        return product;
+    }
 }
