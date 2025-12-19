@@ -25,6 +25,7 @@ builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddScoped<IGetProductByIdUseCase, GetProductByIdUseCase>();
 builder.Services.AddScoped<IGetProductByTypeUseCase, GetProductByTypeUseCase>();
 builder.Services.AddScoped<ICreateProductUseCase, CreateProductUseCase>();
+builder.Services.AddScoped<IGetProductsUseCase, GetProductsUseCase>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
