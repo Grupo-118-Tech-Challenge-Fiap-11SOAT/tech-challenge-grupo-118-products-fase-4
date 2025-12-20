@@ -30,4 +30,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Products.Application\Dtos\" />
+  </ItemGroup>
+
 </Project>

@@ -18,13 +18,13 @@ public class DrinkDto : ProductDto
         
     }
 
-    public DrinkDto(string name, decimal price, bool isActive, List<ImageProduct> images, string size,string flavor) : base(name, price, isActive, images)
+    public DrinkDto(string name, decimal price, bool isActive, List<ImageProduct> images, string size = null, string flavor = null) : base(name, price, isActive, images)
     {
         Flavor = flavor;
         Size = size;
     }
 
-    public DrinkDto(ObjectId id ,string name, decimal price, bool isActive, List<ImageProduct> images, string size, string flavor) : base(id, name, price, isActive, images)
+    public DrinkDto(ObjectId id ,string name, decimal price, bool isActive, List<ImageProduct> images, string size = null, string flavor = null) : base(id, name, price, isActive, images)
     {
         Flavor = flavor;
         Size = size;

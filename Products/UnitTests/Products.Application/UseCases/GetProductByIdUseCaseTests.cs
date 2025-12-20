@@ -1,18 +1,10 @@
 ﻿using FluentAssertions;
 using MongoDB.Bson;
 using Moq;
-using Products.Application.Common.Models;
-using Products.Application.Dtos;
 using Products.Application.UseCases;
 using Products.Domain.Entities;
 using Products.Infra.DataBase.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace UnitTests.Products.Application.UseCases;
 
@@ -34,7 +26,7 @@ public class GetProductByIdUseCaseTests
 
         List<ImageProduct> imagesProduct = new List<ImageProduct>();
 
-        var productEntity = new Drink(id, "Coca-Cola",12.50m, true, DateTime.Now, DateTime.Now, imagesProduct);
+        var productEntity = new Drink(ObjectId.GenerateNewId(), "Coca-Cola",12.50m, true, "M", DateTime.Now, DateTime.Now, null, imagesProduct);
         _productRepositoryMock.Setup(x => x.GetProductByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(productEntity);
 
         //Act

@@ -30,10 +30,10 @@ namespace WebApplication1.Controllers
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public async Task<ActionResult<Result<ProductDto>>> PostAsync(CancellationToken cancellationToken, [FromBody] ProductDto productDto)
+        public async Task<Result<ProductDto>> PostAsync(CancellationToken cancellationToken, [FromBody] ProductDto productDto)
         {
             var result = await _createProductUseCase.ExecuteAsync(productDto, cancellationToken);
-            return StatusCode((int)result.StatusCode, result);
+            return result;
         }
 
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]

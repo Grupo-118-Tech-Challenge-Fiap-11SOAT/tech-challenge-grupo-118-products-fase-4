@@ -1,18 +1,11 @@
 ﻿using FluentAssertions;
 using MongoDB.Bson;
 using Moq;
-using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.UseCases;
 using Products.Domain.Entities;
 using Products.Infra.DataBase.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace UnitTests.Products.Application.UseCases;
 
@@ -30,20 +23,21 @@ public class GetProductByTypeUseCaseTests
     public async Task ExecuteAsync_WhenProductsExist_ShouldReturnOk()
     {
         //Arrange
-        var idCoca = ObjectId.GenerateNewId();
-        var idPepsi = ObjectId.GenerateNewId();
+        var cocaId = ObjectId.GenerateNewId();
+        var juiceId = ObjectId.GenerateNewId();
 
         List<ImageProduct> imagesProduct = new List<ImageProduct>();
-        List<ProductDto> expectedData = new List<ProductDto>{
-            new ProductDto(idCoca, "Coca-Cola", 12.50m, true, imagesProduct),
-            new ProductDto(idPepsi, "Pepsi", 12.50m, true, imagesProduct)
+        List<DrinkDto> expectedData = new List<DrinkDto>{
+            new DrinkDto(cocaId, "Coca-Cola",12.50m, true, imagesProduct),
+            new DrinkDto(juiceId, "Suco de Uva",12.50m, true, imagesProduct, "P", "Uva")
             };
 
         var productsEntities = new List<Product>()
         {
-            new Drink(idCoca,"Coca-Cola", 12.50m, true, DateTime.Now, DateTime.Now, imagesProduct),
-            new Drink(idPepsi,"Pepsi", 12.50m, true, DateTime.Now, DateTime.Now, imagesProduct),
+            new Drink(cocaId,"Coca-Cola", 12.50m, true, null, DateTime.Now, DateTime.Now, null, imagesProduct),
+            new Drink(juiceId, "Suco de Uva", 12.50m, true, "P", DateTime.Now, DateTime.Now, "Uva", imagesProduct),
         };
+
         _productRepositoryMock.Setup(x => x.GetProductByTypeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(productsEntities);
 
         //Act
