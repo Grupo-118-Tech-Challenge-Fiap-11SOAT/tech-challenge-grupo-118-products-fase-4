@@ -1,0 +1,59 @@
+﻿using FluentAssertions;
+using MongoDB.Bson;
+using Moq;
+using Products.Application.Dtos;
+using Products.Application.UseCases;
+using Products.Domain.Entities;
+using Products.Infra.DataBase.Repositories.Interfaces;
+using System.Net;
+
+namespace UnitTests.Products.Application.UseCases;
+
+public class CreateProductUseCaseTests
+{
+    private readonly Mock<IProductRepository> _productRepositoryMock;
+    private readonly CreateProductUseCase _useCase;
+
+    public CreateProductUseCaseTests()
+    {
+        _productRepositoryMock = new Mock<IProductRepository>();
+        _useCase = new CreateProductUseCase(_productRepositoryMock.Object);
+    }
+    [Fact]
+    public async Task ExecuteAsync_WhenProductInsert_ShouldReturnOk()
+    {
+        //Arrange
+        List<ImageProduct> imagesProduct = new List<ImageProduct>();
+
+        var newProduct = new DrinkDto("Coca-Cola", 12.50m, true, imagesProduct, "M");
+        var drinkEntity = new Drink(ObjectId.GenerateNewId(), "Coca-Cola", 12.50m, true, "M", DateTime.Now, DateTime.Now, null, imagesProduct);
+
+        _productRepositoryMock.Setup(x => x.CreateProductAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>())).ReturnsAsync(drinkEntity);
+
+        //Act
+        var result = await _useCase.ExecuteAsync(newProduct, CancellationToken.None);
+
+        //Assert
+        result.Data.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenInternalError_ShouldReturnFail()
+    {
+        //Arrange
+        List<ImageProduct> imagesProduct = new List<ImageProduct>();
+
+        var newProduct = new DrinkDto("Coca-Cola", 12.50m, true, imagesProduct, "M");
+
+        _productRepositoryMock.Setup(x => x.CreateProductAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new Exception("Internal error"));
+
+        //Act
+        var result = await _useCase.ExecuteAsync(newProduct, CancellationToken.None);
+
+        //Assert
+        result.Data.Should().BeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+    }
+}
