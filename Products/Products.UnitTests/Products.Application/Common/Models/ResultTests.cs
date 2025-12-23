@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Products.Application.Common.Models;
 
-namespace UnitTests.Products.Application.Common.Models;
+namespace Products.UnitTests.Products.Application.Common.Models;
 
 public class ResultTests
 {
