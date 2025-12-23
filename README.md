@@ -33,9 +33,39 @@ Todos os produtos compartilham os seguintes campos:
 
 ## 🖼️ Primeiros Passos
 
-Siga o tutorial da [documentação](https://github.com/Grupo-118-Tech-Challenge-Fiap-11SOAT/database-terraform-infra-grupo-118-fase-3) do banco de dado de produto.
-Após o terraform ser executado, digite o comando terraform output db_user_password para obter a senhar gerada.
-Com o banco de dados de Produtos já criado, acesse o projeto na interface MongoDb Atlas e clique em connect -> Compass -> Copie a string de conexão e substitua a senha.
+Para configurar o banco de dados de **Produtos**, siga os passos abaixo.
+
+### 1️ Provisionamento com Terraform
+
+Siga o tutorial disponível na documentação do banco de dados de Produtos para executar o **Terraform**.
+
+Após a execução do Terraform, uma senha será gerada automaticamente para o usuário do banco.
+
+Para visualizá-la, execute o comando:
+
+```bash
+terraform output db_user_password
+```
+
+Guarde essa senha, pois ela será usada na string de conexão.
+
+### 2 Obter a String de Conexão no MongoDB Atlas
+Com o banco de dados de Produtos já criado:
+
+- Acesse o projeto no MongoDB Atlas
+- Clique em Connect
+- Selecione Compass
+- Copie a connection string fornecida
+
+### 3 Ajustar a String de Conexão
+Na string de conexão copiada:
+
+- Substitua o valor da senha pela senha obtida via Terraform
+- Certifique-se de que o usuário e o cluster estejam corretos
+
+Exemplo: mongodb+srv://<usuario>:<senha>@<cluster>.mongodb.net/products
+
+Após isso, a string estará pronta para ser utilizada na aplicação.
 
 ## Endpoint de Criação de Produto
 
