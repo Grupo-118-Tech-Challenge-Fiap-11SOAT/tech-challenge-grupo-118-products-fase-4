@@ -23,7 +23,6 @@
     <ProjectReference Include="..\Products.Application\Products.Application.csproj" />
     <ProjectReference Include="..\Products.Domain\Products.Domain.csproj" />
     <ProjectReference Include="..\Products.Infra\Products.Infra.csproj" />
-    <ProjectReference Include="..\WebApplication1\Products.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>
