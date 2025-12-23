@@ -6,7 +6,7 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main, develop, feature/*]
+    branches: [main, develop, microservice-products]
 
 permissions:
   pull-requests: write  # Required for PR comments
