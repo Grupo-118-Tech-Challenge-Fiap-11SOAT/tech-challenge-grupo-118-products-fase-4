@@ -7,7 +7,7 @@ using Products.Domain.Entities;
 using Products.Infra.DataBase.Repositories.Interfaces;
 using System.Net;
 
-namespace UnitTests.Products.Application.UseCases;
+namespace Products.UnitTests.Products.Application.UseCases;
 
 public class GetProductByTypeUseCaseTests
 {

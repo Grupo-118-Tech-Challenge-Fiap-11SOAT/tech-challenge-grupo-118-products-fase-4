@@ -10,7 +10,7 @@ using Products.Domain.Entities;
 using System.Net;
 using WebApplication1.Controllers;
 
-namespace UnitTests.Products.Api.Controllers;
+namespace Products.UnitTests.Products.Api.Controllers;
 
 public class ProductsControllerTests
 {
