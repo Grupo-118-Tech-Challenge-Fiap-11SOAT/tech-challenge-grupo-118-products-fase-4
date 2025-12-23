@@ -43,13 +43,14 @@ public class ProductsControllerTests
     {
         // Arrange
         var productId = "123";
-        var images = new List<ImageProduct>
+        var images = new List<ImageProductDto>
         {
-             new ImageProduct(1, "https://example.com/front.png"),
-             new ImageProduct(2, "https://example.com/back.png")
+             new ImageProductDto(1, "https://example.com/front.png"),
+             new ImageProductDto(2, "https://example.com/back.png")
         };
-        var ingredients = new List<string>() { "pão", "hamburguer", "queijo"};
-        var productDto = new SnackDto(ObjectId.GenerateNewId(), "x-burger", 12, true, images, ingredients);
+        var ingredients = new List<string>() { "pão", "hamburguer", "queijo" };
+        var productDto = new SnackDto() { Id = ObjectId.GenerateNewId(), Name = "x-burger", Price = 12, IsActive = true, Images = images, Ingredients = ingredients };
+
         var expectedResult = new Result<ProductDto?>().Ok(productDto, HttpStatusCode.OK);         
 
         _getProductByIdUseCaseMock
@@ -173,13 +174,13 @@ public class ProductsControllerTests
     [Fact]
     public async Task PostAsync_WhenInsert_ShouldReturnProduct()
     {
-        var images = new List<ImageProduct>
+        var images = new List<ImageProductDto>
         {
-             new ImageProduct(1, "https://example.com/front.png"),
-             new ImageProduct(2, "https://example.com/back.png")
+             new ImageProductDto(1, "https://example.com/front.png"),
+             new ImageProductDto(2, "https://example.com/back.png")
         };
         var ingredients = new List<string>() { "pão", "hamburguer", "queijo" };
-        var productDto = new SnackDto("x-burger", 12, true, images, ingredients);
+        var productDto = new SnackDto() { Name = "x-burger", Price = 12, IsActive = true, Images = images, Ingredients = ingredients };
 
         var expectedResult = new Result<ProductDto>().Ok(productDto, HttpStatusCode.OK);
 
@@ -201,18 +202,18 @@ public class ProductsControllerTests
         Random random = new Random();
 
         var productId = random.Next(1, 101);
-        var images = new List<ImageProduct>
+        var images = new List<ImageProductDto>
         {
-             new ImageProduct(1, "https://example.com/front.png"),
-             new ImageProduct(2, "https://example.com/back.png")
+             new ImageProductDto(1, "https://example.com/front.png"),
+             new ImageProductDto(2, "https://example.com/back.png")
         };
         var ingredients = new List<string>() { "ingrediente 1", "ingrediente 2", "ingrediente 3" };
 
         ProductDto dto = type switch
         {
-            ProductType.Snack => new SnackDto(ObjectId.GenerateNewId(), name, 12, true, images, ingredients),
-            ProductType.Drink => new DrinkDto(ObjectId.GenerateNewId(), name, 12, true, images, "M", "sabor 1"),
-            ProductType.Accompaniment => new AccompanimentDto(ObjectId.GenerateNewId(), name, 12, true, images, "M")
+            ProductType.Snack => new SnackDto() { Id = ObjectId.GenerateNewId(), Name = name, Price = 12, IsActive = true, Images = images, Ingredients = ingredients },
+            ProductType.Drink => new DrinkDto() { Id = ObjectId.GenerateNewId(), Name = name, Price = 12, IsActive = true, Images = images, Size = "M", Flavor = "sabor 1" },
+            ProductType.Accompaniment => new AccompanimentDto() { Id = ObjectId.GenerateNewId(), Name = name, Price = 12, IsActive = true, Images = images, Size = "M" }
         };
 
         return dto;

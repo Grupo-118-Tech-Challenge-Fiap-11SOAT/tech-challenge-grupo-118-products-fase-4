@@ -26,11 +26,14 @@ public class GetProductByTypeUseCaseTests
         var cocaId = ObjectId.GenerateNewId();
         var juiceId = ObjectId.GenerateNewId();
 
-        List<ImageProduct> imagesProduct = new List<ImageProduct>();
+        List<ImageProductDto> imagesProductDto = new List<ImageProductDto>();
+
         List<DrinkDto> expectedData = new List<DrinkDto>{
-            new DrinkDto(cocaId, "Coca-Cola",12.50m, true, imagesProduct),
-            new DrinkDto(juiceId, "Suco de Uva",12.50m, true, imagesProduct, "P", "Uva")
+            new DrinkDto(){Id = cocaId, Name = "Coca-Cola", Price = 12.50m, IsActive = true, Images = imagesProductDto},
+            new DrinkDto(){Id = juiceId, Name = "Suco de Uva", Price = 12.50m, IsActive = true, Images = imagesProductDto, Size = "P", Flavor = "Uva" }
             };
+
+        List<ImageProduct> imagesProduct = new List<ImageProduct>();
 
         var productsEntities = new List<Product>()
         {

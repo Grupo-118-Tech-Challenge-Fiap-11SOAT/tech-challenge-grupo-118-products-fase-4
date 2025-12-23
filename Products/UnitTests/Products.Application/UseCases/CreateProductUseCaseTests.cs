@@ -23,9 +23,10 @@ public class CreateProductUseCaseTests
     public async Task ExecuteAsync_WhenProductInsert_ShouldReturnOk()
     {
         //Arrange
+        List<ImageProductDto> imagesProductDto = new List<ImageProductDto>();
         List<ImageProduct> imagesProduct = new List<ImageProduct>();
 
-        var newProduct = new DrinkDto("Coca-Cola", 12.50m, true, imagesProduct, "M");
+        var newProduct = new DrinkDto() { Name = "Coca-Cola", Price = 12.50m, IsActive = true, Images = imagesProductDto, Size = "M" };
         var drinkEntity = new Drink(ObjectId.GenerateNewId(), "Coca-Cola", 12.50m, true, "M", DateTime.Now, DateTime.Now, null, imagesProduct);
 
         _productRepositoryMock.Setup(x => x.CreateProductAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>())).ReturnsAsync(drinkEntity);
@@ -42,9 +43,9 @@ public class CreateProductUseCaseTests
     public async Task ExecuteAsync_WhenInternalError_ShouldReturnFail()
     {
         //Arrange
-        List<ImageProduct> imagesProduct = new List<ImageProduct>();
+        List<ImageProductDto> imagesProduct = new List<ImageProductDto>();
 
-        var newProduct = new DrinkDto("Coca-Cola", 12.50m, true, imagesProduct, "M");
+        var newProduct = new DrinkDto() { Name = "Coca-Cola", Price = 12.50m, IsActive = true, Images = imagesProduct, Size = "M" };
 
         _productRepositoryMock.Setup(x => x.CreateProductAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Internal error"));

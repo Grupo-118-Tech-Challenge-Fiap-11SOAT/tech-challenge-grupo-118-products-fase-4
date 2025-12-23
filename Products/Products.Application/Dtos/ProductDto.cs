@@ -1,12 +1,9 @@
 ﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using Products.Application.Enums;
-using Products.Domain.Entities;
 using System.Text.Json.Serialization;
 
 namespace Products.Application.Dtos;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(SnackDto), "snack")]
 [JsonDerivedType(typeof(AccompanimentDto), "accompaniment")]
 [JsonDerivedType(typeof(DessertDto), "dessert")]
@@ -32,29 +29,6 @@ public abstract class ProductDto
     public bool IsActive { get; set; }
 
     public ProductDto() { }
-
-    public ProductDto(string name, decimal price, bool isActive, List<ImageProduct> images)
-    {
-        Name = name;
-        Price = price;
-        IsActive = isActive;
-        foreach (var item in images)
-        {
-            Images.Add(new ImageProductDto(item.Position, item.Url));
-        }
-    }
-
-    public ProductDto(ObjectId id, string name, decimal price, bool isActive, List<ImageProduct> images)
-    {
-        Id = id;
-        Name = name;
-        Price = price;
-        IsActive = isActive;
-        foreach (var item in images)
-        {
-            Images.Add(new ImageProductDto(item.Position, item.Url));
-        }     
-    }
 }
 
 public class ImageProductDto
