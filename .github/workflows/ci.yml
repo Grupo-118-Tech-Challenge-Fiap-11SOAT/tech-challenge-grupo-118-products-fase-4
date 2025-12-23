@@ -20,7 +20,7 @@ jobs:
       sonar-project-key: "tech-challenge-grupo-118-products-fase-4"
       sonar-organization: "grupo-118-tech-challenge-fiap-11soat"
       solution-path: "./Products/Products.sln"
-      test-projects: "**/*Tests.csproj"
+      test-projects: "Products/Products.UnitTests/Products.UnitTests.csproj"
       dotnet-version: "8.0.x"
       build-configuration: "Release"
       dockerfile-path: "./Products/Products.Api/Dockerfile"
