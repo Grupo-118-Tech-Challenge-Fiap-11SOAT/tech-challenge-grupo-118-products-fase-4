@@ -14,6 +14,24 @@ services:
     volumes:
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - mongo_data:/data/db
+  
+# Connection string to put on compass: mongodb://admin:admin123@localhost:27017
+
+
+  products-api:
+    build:
+      context: .
+      dockerfile: Products/Products.Api/Dockerfile
+    container_name: products-api
+    restart: always
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MongoDbSettings__ConnectionString=mongodb://admin:admin123@mongodb:27017
+      - MongoDbSettings__DatabaseName=products-db
+    depends_on:
+      - mongodb
 
 volumes:
   mongo_data:
