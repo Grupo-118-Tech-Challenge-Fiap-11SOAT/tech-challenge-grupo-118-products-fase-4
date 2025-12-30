@@ -10,8 +10,7 @@ namespace Products.Application.Dtos;
 [JsonDerivedType(typeof(DrinkDto), "drink")]
 public abstract class ProductDto
 {
-    [JsonPropertyName("id")]
-    public ObjectId Id { get; set; }
+    [JsonPropertyName("id")] public ObjectId? Id { get; set; }
 
     [JsonRequired]
     [JsonPropertyName("name")]
@@ -21,23 +20,27 @@ public abstract class ProductDto
     [JsonPropertyName("price")]
     public decimal Price { get; set; }
 
-    [JsonPropertyName("images")]
-    public List<ImageProductDto> Images { get; set; } = new List<ImageProductDto>();
+    [JsonPropertyName("images")] public List<ImageProductDto> Images { get; set; } = new List<ImageProductDto>();
 
     [JsonRequired]
     [JsonPropertyName("isActive")]
     public bool IsActive { get; set; }
 
-    public ProductDto() { }
+    [JsonPropertyName("type")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    [JsonPropertyOrder(-1)]
+    public string? Type { get; set; }
+
+    public ProductDto()
+    {
+    }
 }
 
 public class ImageProductDto
 {
-    [JsonPropertyName("position")]
-    public int Position { get;set; }
+    [JsonPropertyName("position")] public int Position { get; set; }
 
-    [JsonPropertyName("url")]
-    public string Url { get; set; }
+    [JsonPropertyName("url")] public string Url { get; set; }
 
     public ImageProductDto(int position, string url)
     {
@@ -47,6 +50,5 @@ public class ImageProductDto
 
     public ImageProductDto()
     {
-        
     }
 }

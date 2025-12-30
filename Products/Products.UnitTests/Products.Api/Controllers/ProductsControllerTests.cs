@@ -8,7 +8,7 @@ using Products.Application.Enums;
 using Products.Application.UseCases.Interfaces;
 using Products.Domain.Entities;
 using System.Net;
-using WebApplication1.Controllers;
+using Products.Api.Controllers;
 
 namespace Products.UnitTests.Products.Api.Controllers;
 
