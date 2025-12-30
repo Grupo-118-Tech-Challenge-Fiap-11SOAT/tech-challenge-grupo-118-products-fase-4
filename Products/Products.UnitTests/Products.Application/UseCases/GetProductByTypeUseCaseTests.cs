@@ -29,8 +29,8 @@ public class GetProductByTypeUseCaseTests
         List<ImageProductDto> imagesProductDto = new List<ImageProductDto>();
 
         List<DrinkDto> expectedData = new List<DrinkDto>{
-            new DrinkDto(){Id = cocaId, Name = "Coca-Cola", Price = 12.50m, IsActive = true, Images = imagesProductDto},
-            new DrinkDto(){Id = juiceId, Name = "Suco de Uva", Price = 12.50m, IsActive = true, Images = imagesProductDto, Size = "P", Flavor = "Uva" }
+            new DrinkDto(){Id = cocaId.ToString(), Name = "Coca-Cola", Price = 12.50m, IsActive = true, Images = imagesProductDto},
+            new DrinkDto(){Id = juiceId.ToString(), Name = "Suco de Uva", Price = 12.50m, IsActive = true, Images = imagesProductDto, Size = "P", Flavor = "Uva" }
             };
 
         List<ImageProduct> imagesProduct = new List<ImageProduct>();

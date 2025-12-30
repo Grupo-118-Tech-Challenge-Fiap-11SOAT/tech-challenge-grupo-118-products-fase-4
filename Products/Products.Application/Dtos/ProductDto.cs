@@ -10,7 +10,7 @@ namespace Products.Application.Dtos;
 [JsonDerivedType(typeof(DrinkDto), "drink")]
 public abstract class ProductDto
 {
-    [JsonPropertyName("id")] public ObjectId? Id { get; set; }
+    [JsonPropertyName("id")] public string? Id { get; set; }
 
     [JsonRequired]
     [JsonPropertyName("name")]
