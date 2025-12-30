@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Products.Application.Dtos;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -6,6 +7,7 @@ namespace Products.Api.Examples;
 /// <summary>
 /// Class to create multiple examples for Swagger documentation
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class ProductsExample : IMultipleExamplesProvider<ProductDto>
 {
     /// <summary>
