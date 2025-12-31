@@ -6,7 +6,6 @@ using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.Enums;
 using Products.Application.UseCases.Interfaces;
-using Products.Domain.Entities;
 using System.Net;
 using WebApplication1.Controllers;
 
