@@ -37,10 +37,10 @@ public class GetProductByTypeUseCase : IGetProductByTypeUseCase
 
             ProductDto dto = p switch
             {
-                Snack s => new SnackDto() { Id = s.Id, Name = s.Name, Price = s.Price, IsActive = s.IsActive, Images = images, Ingredients = s.Ingredients },
-                Accompaniment a => new AccompanimentDto() { Id = a.Id, Name = a.Name, Price = a.Price, IsActive = a.IsActive, Images = images, Size = a.Size },
-                Dessert d => new DessertDto() { Id = d.Id, Name = d.Name, Price = d.Price, IsActive = d.IsActive, Images = images, PortionSize = d.PortionSize },
-                Drink dr => new DrinkDto() { Id = dr.Id, Name = dr.Name, Price = dr.Price, IsActive = dr.IsActive, Images = images, Size = dr.Size, Flavor = dr.Flavor },
+                Snack s => new SnackDto() { Id = s.Id.ToString(), Name = s.Name, Price = s.Price, IsActive = s.IsActive, Images = images, Ingredients = s.Ingredients },
+                Accompaniment a => new AccompanimentDto() { Id = a.Id.ToString(), Name = a.Name, Price = a.Price, IsActive = a.IsActive, Images = images, Size = a.Size },
+                Dessert d => new DessertDto() { Id = d.Id.ToString(), Name = d.Name, Price = d.Price, IsActive = d.IsActive, Images = images, PortionSize = d.PortionSize },
+                Drink dr => new DrinkDto() { Id = dr.Id.ToString(), Name = dr.Name, Price = dr.Price, IsActive = dr.IsActive, Images = images, Size = dr.Size, Flavor = dr.Flavor },
                 _ => throw new NotSupportedException($"Unsupported product type: {p.GetType().Name}")
             };
 

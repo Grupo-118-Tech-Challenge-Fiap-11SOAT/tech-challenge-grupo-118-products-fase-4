@@ -6,6 +6,8 @@ using Products.Infra.DataBase.Repositories.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
+using Products.Application.Dtos;
+using Swashbuckle.AspNetCore.Filters;
 
 [assembly: ExcludeFromCodeCoverage]
 
@@ -36,11 +38,8 @@ builder.Services.AddSwaggerGen(options =>
 {
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
-
-builder.Services.AddSwaggerGen(s =>
-{
-    s.SwaggerDoc("v1", new OpenApiInfo
+    
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Tech Challenge - Fast Food API - Products - Fase 4",
         Version = "v1",
@@ -53,7 +52,27 @@ builder.Services.AddSwaggerGen(s =>
                 "https://github.com/Grupo-118-Tech-Challenge-Fiap-11SOAT/tech-challenge-grupo-118-products-fase-4")
         }
     });
+    
+    options.UseAllOfForInheritance();
+    options.UseOneOfForPolymorphism();
+    
+    options.SelectDiscriminatorNameUsing(baseType =>
+        baseType == typeof(ProductDto) ? "type" : null);
+
+    options.SelectDiscriminatorValueUsing(subType =>
+    {
+        if (subType == typeof(SnackDto)) return "snack";
+        if (subType == typeof(AccompanimentDto)) return "accompaniment";
+        if (subType == typeof(DessertDto)) return "dessert";
+        if (subType == typeof(DrinkDto)) return "drink";
+        return null;
+    });    
+    
+    options.ExampleFilters();
+    
 });
+
+builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>(); 
 
 var app = builder.Build();
 

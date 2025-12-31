@@ -1,11 +1,16 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Products.Api.Examples;
 using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.UseCases.Interfaces;
+using Swashbuckle.AspNetCore.Filters;
 
-namespace WebApplication1.Controllers
+namespace Products.Api.Controllers
 {
+    /// <summary>
+    /// Controller responsible for managing products.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class ProductsController : ControllerBase
@@ -16,7 +21,7 @@ namespace WebApplication1.Controllers
         private readonly IGetProductByTypeUseCase _getProductByTypeUseCase;
         private readonly ICreateProductUseCase _createProductUseCase;
 
-        public ProductsController(ILogger<ProductsController> logger, IGetProductByIdUseCase getProductByIdUseCase, 
+        public ProductsController(ILogger<ProductsController> logger, IGetProductByIdUseCase getProductByIdUseCase,
             IGetProductByTypeUseCase getProductByTypeUseCase,
             IGetProductsUseCase getProductsUseCase,
             ICreateProductUseCase createProductUseCase)
@@ -36,8 +41,10 @@ namespace WebApplication1.Controllers
         /// <returns>The created Product.</returns>
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [SwaggerRequestExample(typeof(ProductDto), typeof(ProductsExample))]
         [HttpPost]
-        public async Task<Result<ProductDto>> PostAsync(CancellationToken cancellationToken, [FromBody] ProductDto productDto)
+        public async Task<Result<ProductDto>> PostAsync(CancellationToken cancellationToken,
+            [FromBody] ProductDto productDto)
         {
             var result = await _createProductUseCase.ExecuteAsync(productDto, cancellationToken);
             return result;
@@ -85,7 +92,8 @@ namespace WebApplication1.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpGet("category/{category}")]
         [AllowAnonymous]
-        public async Task<Result<List<ProductDto>?>> GetByTypeAsync(string category, CancellationToken cancellationToken)
+        public async Task<Result<List<ProductDto>?>> GetByTypeAsync(string category,
+            CancellationToken cancellationToken)
         {
             var result = await _getProductByTypeUseCase.ExecuteAsync(category, cancellationToken);
             return result;

@@ -7,7 +7,7 @@ using Products.Application.Dtos;
 using Products.Application.Enums;
 using Products.Application.UseCases.Interfaces;
 using System.Net;
-using WebApplication1.Controllers;
+using Products.Api.Controllers;
 
 namespace Products.UnitTests.Products.Api.Controllers;
 
@@ -48,7 +48,7 @@ public class ProductsControllerTests
              new ImageProductDto(2, "https://example.com/back.png")
         };
         var ingredients = new List<string>() { "pão", "hamburguer", "queijo" };
-        var productDto = new SnackDto() { Id = ObjectId.GenerateNewId(), Name = "x-burger", Price = 12, IsActive = true, Images = images, Ingredients = ingredients };
+        var productDto = new SnackDto() { Id = ObjectId.GenerateNewId().ToString(), Name = "x-burger", Price = 12, IsActive = true, Images = images, Ingredients = ingredients };
 
         var expectedResult = new Result<ProductDto?>().Ok(productDto, HttpStatusCode.OK);         
 
@@ -210,9 +210,9 @@ public class ProductsControllerTests
 
         ProductDto dto = type switch
         {
-            ProductType.Snack => new SnackDto() { Id = ObjectId.GenerateNewId(), Name = name, Price = 12, IsActive = true, Images = images, Ingredients = ingredients },
-            ProductType.Drink => new DrinkDto() { Id = ObjectId.GenerateNewId(), Name = name, Price = 12, IsActive = true, Images = images, Size = "M", Flavor = "sabor 1" },
-            ProductType.Accompaniment => new AccompanimentDto() { Id = ObjectId.GenerateNewId(), Name = name, Price = 12, IsActive = true, Images = images, Size = "M" }
+            ProductType.Snack => new SnackDto() { Id = ObjectId.GenerateNewId().ToString(), Name = name, Price = 12, IsActive = true, Images = images, Ingredients = ingredients },
+            ProductType.Drink => new DrinkDto() { Id = ObjectId.GenerateNewId().ToString(), Name = name, Price = 12, IsActive = true, Images = images, Size = "M", Flavor = "sabor 1" },
+            ProductType.Accompaniment => new AccompanimentDto() { Id = ObjectId.GenerateNewId().ToString(), Name = name, Price = 12, IsActive = true, Images = images, Size = "M" }
         };
 
         return dto;
