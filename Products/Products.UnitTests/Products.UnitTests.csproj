@@ -10,30 +10,32 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Products.Application\Dtos\**" />
+      <EmbeddedResource Remove="Products.Application\Dtos\**" />
+      <None Remove="Products.Application\Dtos\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="FluentAssertions" Version="8.8.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
-        <PackageReference Include="Moq" Version="4.20.72"/>
-        <PackageReference Include="xunit" Version="2.5.3"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3"/>
+        <PackageReference Include="FluentAssertions" Version="8.8.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+        <PackageReference Include="Moq" Version="4.20.72" />
+        <PackageReference Include="xunit" Version="2.5.3" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Products.Api\Products.Api.csproj"/>
-        <ProjectReference Include="..\Products.Application\Products.Application.csproj"/>
-        <ProjectReference Include="..\Products.Domain\Products.Domain.csproj"/>
-        <ProjectReference Include="..\Products.Infra\Products.Infra.csproj"/>
+        <ProjectReference Include="..\Products.Api\Products.Api.csproj" />
+        <ProjectReference Include="..\Products.Application\Products.Application.csproj" />
+        <ProjectReference Include="..\Products.Domain\Products.Domain.csproj" />
+        <ProjectReference Include="..\Products.Infra\Products.Infra.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Products.Application\Dtos\"/>
+        <Using Include="Xunit" />
     </ItemGroup>
 
 </Project>

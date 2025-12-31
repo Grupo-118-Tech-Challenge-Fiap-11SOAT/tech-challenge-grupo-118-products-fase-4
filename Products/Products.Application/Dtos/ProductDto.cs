@@ -1,8 +1,10 @@
 ﻿using MongoDB.Bson;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Products.Application.Dtos;
 
+[ExcludeFromCodeCoverage]
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(SnackDto), "snack")]
 [JsonDerivedType(typeof(AccompanimentDto), "accompaniment")]
