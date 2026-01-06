@@ -12,4 +12,6 @@ public interface IProductRepository
 
     Task<List<Product>> GetProductsAsync(CancellationToken cancellationToken = default);
     Task ClearProductsAsync(CancellationToken cancellationToken = default);
+    Task<List<Product>> GetActiveProductsByIdsAsync(List<string> ids, CancellationToken cancellationToken = default);
+
 }

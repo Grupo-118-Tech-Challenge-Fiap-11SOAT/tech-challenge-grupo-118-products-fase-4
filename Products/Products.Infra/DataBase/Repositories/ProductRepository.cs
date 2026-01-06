@@ -23,6 +23,20 @@ public class ProductRepository : IProductRepository
         return await _context.Products.Find(x => x.Id == objectId).FirstOrDefaultAsync();
     }
 
+    public async Task<List<Product>> GetActiveProductsByIdsAsync(List<string> ids, CancellationToken cancellationToken = default)
+    {
+        var objectIds = ids.Select(id => new ObjectId(id)).ToList();
+
+        var filter = Builders<Product>.Filter.And(
+            Builders<Product>.Filter.In(x => x.Id, objectIds),
+            Builders<Product>.Filter.Eq(x => x.IsActive, true)
+        );
+
+        return await _context.Products
+            .Find(filter)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<Product>> GetProductsAsync(CancellationToken cancellationToken = default)
     {
         return await _context.Products.Find(_ => true).ToListAsync();

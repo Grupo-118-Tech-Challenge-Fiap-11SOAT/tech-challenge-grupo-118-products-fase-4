@@ -20,17 +20,20 @@ namespace Products.Api.Controllers
         private readonly IGetProductsUseCase _getProductsUseCase;
         private readonly IGetProductByTypeUseCase _getProductByTypeUseCase;
         private readonly ICreateProductUseCase _createProductUseCase;
+        private readonly IGetActiveProductsByIdsUseCase _getActiveProductByIdsUseCase;
 
         public ProductsController(ILogger<ProductsController> logger, IGetProductByIdUseCase getProductByIdUseCase,
             IGetProductByTypeUseCase getProductByTypeUseCase,
             IGetProductsUseCase getProductsUseCase,
-            ICreateProductUseCase createProductUseCase)
+            ICreateProductUseCase createProductUseCase,
+            IGetActiveProductsByIdsUseCase getActiveProductByIdsUseCase)
         {
             _logger = logger;
             _getProductByIdUseCase = getProductByIdUseCase;
             _getProductsUseCase = getProductsUseCase;
             _getProductByTypeUseCase = getProductByTypeUseCase;
             _createProductUseCase = createProductUseCase;
+            _getActiveProductByIdsUseCase = getActiveProductByIdsUseCase;
         }
 
         /// <summary>
@@ -96,6 +99,26 @@ namespace Products.Api.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _getProductByTypeUseCase.ExecuteAsync(category, cancellationToken);
+            return result;
+        }
+
+        /// <summary>
+        /// Retrieves active products by a list of product IDs.
+        /// </summary>
+        /// <param name="request">List of product IDs.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A list of active products.</returns>
+        [ProducesResponseType(typeof(List<ProductDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [HttpPost("active/by-ids")]
+        [AllowAnonymous]
+        public async Task<Result<List<ProductDto>>> GetActiveByIdsAsync(
+            [FromBody] List<string> ids,
+            CancellationToken cancellationToken)
+        {
+            var result = await _getActiveProductByIdsUseCase
+                .ExecuteAsync(ids, cancellationToken);
+
             return result;
         }
     }
