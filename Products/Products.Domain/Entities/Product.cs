@@ -74,7 +74,7 @@ public class ImageProduct
     [BsonElement("url")]
     public string Url { get; protected set; }
 
-    private readonly Regex _imageRegex = new Regex(@"(\W)(jpg|jpeg|png|gif|webp)", RegexOptions.Compiled);
+    private readonly Regex _imageRegex = new Regex(@"(\W)(jpg|jpeg|png|gif|webp)", RegexOptions.Compiled, TimeSpan.FromMilliseconds(200));
 
     public ImageProduct() { }
 
