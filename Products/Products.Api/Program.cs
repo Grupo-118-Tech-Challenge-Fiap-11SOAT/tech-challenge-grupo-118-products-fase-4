@@ -5,7 +5,9 @@ using Products.Infra.DataBase.Repositories;
 using Products.Infra.DataBase.Repositories.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using Products.Application.Dtos;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -24,6 +26,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
 
+var mongoDbSettings = builder.Configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>();
+
 builder.Services.AddSingleton<MongoDbContext>();
 
 builder.Services.AddScoped<IGetProductByIdUseCase, GetProductByIdUseCase>();
@@ -38,7 +42,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-    
+
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Tech Challenge - Fast Food API - Products - Fase 4",
@@ -52,10 +56,10 @@ builder.Services.AddSwaggerGen(options =>
                 "https://github.com/Grupo-118-Tech-Challenge-Fiap-11SOAT/tech-challenge-grupo-118-products-fase-4")
         }
     });
-    
+
     options.UseAllOfForInheritance();
     options.UseOneOfForPolymorphism();
-    
+
     options.SelectDiscriminatorNameUsing(baseType =>
         baseType == typeof(ProductDto) ? "type" : null);
 
@@ -66,13 +70,20 @@ builder.Services.AddSwaggerGen(options =>
         if (subType == typeof(DessertDto)) return "dessert";
         if (subType == typeof(DrinkDto)) return "drink";
         return null;
-    });    
-    
+    });
+
     options.ExampleFilters();
-    
 });
 
-builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>(); 
+builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
+
+// Health Checks to use on Kubernetes liveness and readiness probes
+builder.Services.AddHealthChecks()
+    .AddMongoDb(_ => new MongoClient(mongoDbSettings.ConnectionString),
+        name: "MongoDB Connection Check",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: new[] { "database", "mongodb" },
+        timeout: TimeSpan.FromSeconds(1));
 
 var app = builder.Build();
 
@@ -90,5 +101,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/healthz");
 
 app.Run();
