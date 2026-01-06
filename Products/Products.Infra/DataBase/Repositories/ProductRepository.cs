@@ -42,4 +42,12 @@ public class ProductRepository : IProductRepository
         await _context.Products.InsertOneAsync(product);
         return product;
     }
+
+    public async Task ClearProductsAsync(CancellationToken cancellationToken = default)
+    {
+        await _context.Products.DeleteManyAsync(
+            Builders<Product>.Filter.Empty,
+            cancellationToken
+        );
+    }
 }

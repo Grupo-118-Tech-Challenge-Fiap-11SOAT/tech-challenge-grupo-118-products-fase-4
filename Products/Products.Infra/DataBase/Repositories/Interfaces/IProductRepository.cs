@@ -11,4 +11,5 @@ public interface IProductRepository
     Task<Product> CreateProductAsync(Product product, CancellationToken cancellationToken = default);
 
     Task<List<Product>> GetProductsAsync(CancellationToken cancellationToken = default);
+    Task ClearProductsAsync(CancellationToken cancellationToken = default);
 }
