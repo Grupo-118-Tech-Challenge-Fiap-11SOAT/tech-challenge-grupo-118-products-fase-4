@@ -86,6 +86,8 @@ builder.Services.AddHealthChecks()
         tags: new[] { "database", "mongodb" },
         timeout: TimeSpan.FromSeconds(1));
 
+builder.Services.AddHostedService<ProductDatabaseSeed>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

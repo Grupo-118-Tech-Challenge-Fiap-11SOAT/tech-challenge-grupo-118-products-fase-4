@@ -64,4 +64,15 @@ public class ProductRepository : IProductRepository
             cancellationToken
         );
     }
+
+    public async Task CreateManyAsync(IEnumerable<Product> products, CancellationToken cancellationToken)
+    {
+        await _context.Products.InsertManyAsync(
+        products,
+        new InsertManyOptions
+        {
+            IsOrdered = true
+        },
+        cancellationToken);
+    }
 }
