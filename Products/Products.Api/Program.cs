@@ -8,6 +8,7 @@ using System.Reflection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using Products.Api.Seeds;
 using Products.Application.Dtos;
 using Swashbuckle.AspNetCore.Filters;
 
