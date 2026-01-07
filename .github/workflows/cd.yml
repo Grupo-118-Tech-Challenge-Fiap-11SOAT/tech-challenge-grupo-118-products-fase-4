@@ -34,7 +34,7 @@ jobs:
                   "ACR_USERNAME": "ACR_USERNAME",
                   "ACR_PASSWORD": "ACR_PASSWORD",
                   "MongoDbSettings__ConnectionString": "GS_PRODUCTS_DATABASE_CONNECTIONSTRING",
-                  "MongoDbSettings__DatabaseName": "GS_PRODUCTS_DATABASE_NAME",
+                  "MongoDbSettings__DatabaseName": "GS_PRODUCTS_DATABASE_NAME"
               }
           variables_mapping: |
                 {
