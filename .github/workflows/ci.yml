@@ -1,0 +1,32 @@
+name: CI Pipeline
+
+# on: push
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop, microservice-products]
+
+permissions:
+  pull-requests: write  # Required for PR comments
+  contents: read
+  issues: write  # Optional, for issue comments
+
+jobs:
+  ci:
+    uses: Grupo-118-Tech-Challenge-Fiap-11SOAT/terraform-template-pipeline-grupo118-fase-3/.github/workflows/dotnet-ci-template.yml@main
+    with:
+      sonar-project-key: "tech-challenge-grupo-118-products-fase-4"
+      sonar-organization: "grupo-118-tech-challenge-fiap-11soat"
+      solution-path: "./Products/Products.sln"
+      test-projects: "Products/Products.UnitTests/Products.UnitTests.csproj"
+      dotnet-version: "8.0.x"
+      build-configuration: "Release"
+      dockerfile-path: "./Products/Products.Api/Dockerfile"
+      image-name: "tech-challenge-grupo-118-products-fase-4"
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+      ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+      ACR_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
