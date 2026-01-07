@@ -20,7 +20,7 @@ public class CreateProductUseCaseTests
         _useCase = new CreateProductUseCase(_productRepositoryMock.Object);
     }
     [Fact]
-    public async Task ExecuteAsync_WhenProductInsert_ShouldReturnOk()
+    public async Task ExecuteAsync_WhenProductDrinkInsert_ShouldReturnOk()
     {
         //Arrange
         List<ImageProductDto> imagesProductDto = new List<ImageProductDto>();
@@ -28,6 +28,66 @@ public class CreateProductUseCaseTests
 
         var newProduct = new DrinkDto() { Name = "Coca-Cola", Price = 12.50m, IsActive = true, Images = imagesProductDto, Size = "M" };
         var drinkEntity = new Drink(ObjectId.GenerateNewId(), "Coca-Cola", 12.50m, true, "M", DateTime.Now, DateTime.Now, null, imagesProduct);
+
+        _productRepositoryMock.Setup(x => x.CreateProductAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>())).ReturnsAsync(drinkEntity);
+
+        //Act
+        var result = await _useCase.ExecuteAsync(newProduct, CancellationToken.None);
+
+        //Assert
+        result.Data.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenProductSnackInsert_ShouldReturnOk()
+    {
+        //Arrange
+        List<ImageProductDto> imagesProductDto = new List<ImageProductDto>();
+        List<ImageProduct> imagesProduct = new List<ImageProduct>();
+
+        var newProduct = new SnackDto() { Name = "X-Salada", Price = 12.50m, IsActive = true, Images = imagesProductDto };
+        var drinkEntity = new Snack(ObjectId.GenerateNewId(), "X-Salada", 12.50m, true, DateTime.Now, DateTime.Now, null, imagesProduct);
+
+        _productRepositoryMock.Setup(x => x.CreateProductAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>())).ReturnsAsync(drinkEntity);
+
+        //Act
+        var result = await _useCase.ExecuteAsync(newProduct, CancellationToken.None);
+
+        //Assert
+        result.Data.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenProductDessertInsert_ShouldReturnOk()
+    {
+        //Arrange
+        List<ImageProductDto> imagesProductDto = new List<ImageProductDto>();
+        List<ImageProduct> imagesProduct = new List<ImageProduct>();
+
+        var newProduct = new DessertDto() { Name = "Sorvete", Price = 12.50m, IsActive = true, Images = imagesProductDto };
+        var drinkEntity = new Dessert(ObjectId.GenerateNewId(), "Sorvete", 12.50m, true, "M", DateTime.Now, DateTime.Now, imagesProduct);
+
+        _productRepositoryMock.Setup(x => x.CreateProductAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>())).ReturnsAsync(drinkEntity);
+
+        //Act
+        var result = await _useCase.ExecuteAsync(newProduct, CancellationToken.None);
+
+        //Assert
+        result.Data.Should().NotBeNull();
+        result.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenProductAccompanimentInsert_ShouldReturnOk()
+    {
+        //Arrange
+        List<ImageProductDto> imagesProductDto = new List<ImageProductDto>();
+        List<ImageProduct> imagesProduct = new List<ImageProduct>();
+
+        var newProduct = new AccompanimentDto() { Name = "Batata-Frita", Price = 12.50m, IsActive = true, Images = imagesProductDto };
+        var drinkEntity = new Accompaniment(ObjectId.GenerateNewId(), "Batata-Frita", 12.50m, true, DateTime.Now, DateTime.Now, "M");
 
         _productRepositoryMock.Setup(x => x.CreateProductAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>())).ReturnsAsync(drinkEntity);
 

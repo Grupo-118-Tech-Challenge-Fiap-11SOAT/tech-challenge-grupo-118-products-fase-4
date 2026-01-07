@@ -12,7 +12,6 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: admin123
       MONGO_INITDB_DATABASE: products-db
     volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - mongo_data:/data/db
   
 # Connection string to put on compass: mongodb://admin:admin123@localhost:27017
