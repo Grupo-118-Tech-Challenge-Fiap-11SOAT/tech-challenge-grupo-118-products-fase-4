@@ -112,13 +112,9 @@ namespace Products.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpPost("active/by-ids")]
         [AllowAnonymous]
-        public async Task<Result<List<ProductDto>>> GetActiveByIdsAsync(
-            [FromBody] List<string> ids,
-            CancellationToken cancellationToken)
+        public async Task<Result<List<ProductDto>>> GetActiveByIdsAsync([FromBody] List<string> ids, CancellationToken cancellationToken)
         {
-            var result = await _getActiveProductByIdsUseCase
-                .ExecuteAsync(ids, cancellationToken);
-
+            var result = await _getActiveProductByIdsUseCase.ExecuteAsync(ids, cancellationToken);
             return result;
         }
     }

@@ -1,7 +1,9 @@
 ﻿using MongoDB.Bson;
 using Products.Domain.Entities;
 using Products.Infra.DataBase.Repositories.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
+[ExcludeFromCodeCoverage]
 public class ProductDatabaseSeed : IHostedService
 {
     private readonly IServiceProvider _serviceProvider;

@@ -2,12 +2,13 @@
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using Moq;
+using Products.Api.Controllers;
 using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.Enums;
+using Products.Application.UseCases;
 using Products.Application.UseCases.Interfaces;
 using System.Net;
-using Products.Api.Controllers;
 
 namespace Products.UnitTests.Products.Api.Controllers;
 
@@ -18,6 +19,7 @@ public class ProductsControllerTests
     private readonly Mock<IGetProductByTypeUseCase> _getProductByTypeUseCaseMock;
     private readonly Mock<ICreateProductUseCase> _createProductUseCaseMock;
     private readonly Mock<IGetProductsUseCase> _getProductsUseCaseMock;
+    private readonly Mock<IGetActiveProductsByIdsUseCase> _getActiveProductsByIdsUseCaseMock;
     private readonly ProductsController _controller;
 
     public ProductsControllerTests()
@@ -27,13 +29,15 @@ public class ProductsControllerTests
         _getProductByTypeUseCaseMock = new Mock<IGetProductByTypeUseCase>();
         _getProductsUseCaseMock = new Mock<IGetProductsUseCase>();
         _createProductUseCaseMock = new Mock<ICreateProductUseCase>();
+        _getActiveProductsByIdsUseCaseMock = new Mock<IGetActiveProductsByIdsUseCase>();
 
         _controller = new ProductsController(
             _loggerMock.Object,
             _getProductByIdUseCaseMock.Object,
             _getProductByTypeUseCaseMock.Object,
             _getProductsUseCaseMock.Object,
-            _createProductUseCaseMock.Object
+            _createProductUseCaseMock.Object,
+            _getActiveProductsByIdsUseCaseMock.Object
         );
     }
 
@@ -193,8 +197,32 @@ public class ProductsControllerTests
         result.Data.Should().NotBeNull();
     }
 
+    [Fact]
+    public async Task GetByIdsAsync_WhenFoundProducts_ShouldReturnOk()
+    {
+        // Arrange
+        var productsIds = new List<string> { "123", "213" };
 
+        var products = new List<ProductDto>
+    {
+        new SnackDto { Id = "123", Name = "Burger" },
+        new DrinkDto { Id = "213", Name = "Coke" }
+    };
 
+        var expectedResult =new Result<List<ProductDto>>().Ok(products, HttpStatusCode.OK);
+
+        _getActiveProductsByIdsUseCaseMock
+            .Setup(x => x.ExecuteAsync(productsIds, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedResult);
+
+        // Act
+        var result = await _controller.GetActiveByIdsAsync(productsIds, CancellationToken.None);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Data.Should().NotBeNull();
+        result.Data.Should().HaveCount(2);
+    }
 
     private ProductDto BuildProductDto(string name, ProductType type)
     {
