@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using Products.Domain.Common.Exceptions;
 using Products.Domain.Entities;
 using Products.Infra.DataBase.Contexts;
 using Products.Infra.DataBase.Repositories.Interfaces;
@@ -19,13 +20,25 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product?> GetProductByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        var objectId = new ObjectId(id);
+        if (!ObjectId.TryParse(id, out var objectId))
+            throw new InvalidObjectIdException(id);
+
         return await _context.Products.Find(x => x.Id == objectId).FirstOrDefaultAsync();
     }
 
-    public async Task<List<Product>> GetActiveProductsByIdsAsync(List<string> ids, CancellationToken cancellationToken = default)
+    public async Task<List<Product>> GetActiveProductsByIdsAsync(
+    List<string> ids,
+    CancellationToken cancellationToken = default)
     {
-        var objectIds = ids.Select(id => new ObjectId(id)).ToList();
+        var objectIds = new List<ObjectId>();
+
+        foreach (var id in ids)
+        {
+            if (!ObjectId.TryParse(id, out var objectId))
+                throw new InvalidObjectIdException(id);
+
+            objectIds.Add(objectId);
+        }
 
         var filter = Builders<Product>.Filter.And(
             Builders<Product>.Filter.In(x => x.Id, objectIds),
@@ -42,13 +55,21 @@ public class ProductRepository : IProductRepository
         return await _context.Products.Find(_ => true).ToListAsync();
     }
 
-    public async Task<List<Product>?> GetProductByTypeAsync(string type, CancellationToken cancellationToken = default)
+    public async Task<List<Product>?> GetProductByTypeAsync(string type,CancellationToken cancellationToken = default)
     {
-        var filter = Builders<Product>.Filter.AnyEq("_t", type);
+        var filter = Builders<Product>.Filter.Eq("_t", type);
 
-        return await _context.Products
-            .Find(filter)
-            .ToListAsync(cancellationToken);
+        var options = new FindOptions<Product>
+        {
+            Collation = new Collation(
+                locale: "en",
+                strength: CollationStrength.Secondary
+            )
+        };
+
+        using var cursor = await _context.Products.FindAsync(filter, options, cancellationToken);
+
+        return await cursor.ToListAsync(cancellationToken);
     }
 
     public async Task<Product> CreateProductAsync(Product product, CancellationToken cancellationToken = default)

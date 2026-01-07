@@ -61,9 +61,7 @@ public class GetActiveProductsByIdsUseCaseTests
         var result = await _useCase.ExecuteAsync(ids);
 
         // Assert
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Data.Should().NotBeNull();
-        result.Data.Should().BeEmpty();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]

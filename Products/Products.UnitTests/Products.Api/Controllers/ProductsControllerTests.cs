@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using Moq;
@@ -44,60 +46,85 @@ public class ProductsControllerTests
     [Fact]
     public async Task GetByIdAsync_WhenFound_ShouldReturnProduct()
     {
-        // Arrange
         var productId = "123";
-        var images = new List<ImageProductDto>
-        {
-             new ImageProductDto(1, "https://example.com/front.png"),
-             new ImageProductDto(2, "https://example.com/back.png")
-        };
-        var ingredients = new List<string>() { "pão", "hamburguer", "queijo" };
-        var productDto = new SnackDto() { Id = ObjectId.GenerateNewId().ToString(), Name = "x-burger", Price = 12, IsActive = true, Images = images, Ingredients = ingredients };
 
-        var expectedResult = new Result<ProductDto?>().Ok(productDto, HttpStatusCode.OK);         
+        var images = new List<ImageProductDto>
+    {
+        new(1, "https://example.com/front.png"),
+        new(2, "https://example.com/back.png")
+    };
+
+        var ingredients = new List<string> { "pão", "hamburguer", "queijo" };
+
+        var productDto = new SnackDto
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            Name = "x-burger",
+            Price = 12,
+            IsActive = true,
+            Images = images,
+            Ingredients = ingredients
+        };
+
+        var expectedResult = new Result<ProductDto?>().Ok(productDto, HttpStatusCode.OK);
 
         _getProductByIdUseCaseMock
             .Setup(x => x.ExecuteAsync(productId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResult);
 
-        // Act
-        var result = await _controller.GetByIdAsync(productId, CancellationToken.None);
+        var action = await _controller.GetByIdAsync(productId, CancellationToken.None);
 
-        // Assert
-        result.Data.Should().Be(productDto);
+        var objectResult = action.Should()
+            .BeAssignableTo<ObjectResult>()
+            .Subject;
+
+        var result = ExtractResult<ProductDto?>(action);
+
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        _getProductByIdUseCaseMock.Verify(x => x.ExecuteAsync(productId, It.IsAny<CancellationToken>()), Times.Once);
+        result.Data.Should().BeEquivalentTo(productDto);
     }
 
     [Fact]
-    public async Task GetByIdAsync_WhenNotFound_ShouldReturnFail()
+    public async Task GetByIdAsync_WhenNotFound_ShouldReturnNotFound()
     {
         // Arrange
         var productId = "123";
-        var expectedResult = new Result<ProductDto?>().Fail("Product not found", HttpStatusCode.NotFound);
+
+        var expectedResult =
+            new Result<ProductDto?>().Fail("Product not found", HttpStatusCode.NotFound);
 
         _getProductByIdUseCaseMock
             .Setup(x => x.ExecuteAsync(productId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResult);
 
         // Act
-        var result = await _controller.GetByIdAsync(productId, CancellationToken.None);
+        var action = await _controller.GetByIdAsync(productId, CancellationToken.None);
 
         // Assert
+        var objectResult = action.Should()
+            .BeAssignableTo<ObjectResult>()
+            .Subject;
+
+        objectResult.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+
+        var result = ExtractResult<ProductDto?>(action);
+
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         result.Message.Should().Be("Product not found");
         result.Data.Should().BeNull();
     }
 
+
+
     [Fact]
     public async Task GetAsync_WhenThereAreProducts_ShouldReturnAllProducts()
     {
-        // Arrange
-        var productSnack = BuildProductDto("Hamburguer", ProductType.Snack);
-        var productDrink = BuildProductDto("Suco", ProductType.Drink);
-        var productAccompaniment = BuildProductDto("Batata-Frita", ProductType.Accompaniment);
-
-        var products = new List<ProductDto>() { productSnack, productDrink, productAccompaniment };
+        var products = new List<ProductDto>
+    {
+        BuildProductDto("Hamburguer", ProductType.Snack),
+        BuildProductDto("Suco", ProductType.Drink),
+        BuildProductDto("Batata-Frita", ProductType.Accompaniment)
+    };
 
         var expectedResult = new Result<List<ProductDto>>().Ok(products, HttpStatusCode.OK);
 
@@ -105,103 +132,117 @@ public class ProductsControllerTests
             .Setup(x => x.ExecuteAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResult);
 
-        // Act
-        var result = await _controller.GetAsync(CancellationToken.None);
+        var action = await _controller.GetAsync(CancellationToken.None);
 
-        // Assert
+        var objectResult = action.Should()
+            .BeAssignableTo<ObjectResult>()
+            .Subject;
+
+        var result = ExtractResult<List<ProductDto>>(action);
+
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Data.Should().NotBeEmpty();
     }
 
-    [Fact]
-    public async Task GetAsync_WhenInternalError_ShouldReturnFail()
-    {
-        // Arrange
 
-        var expectedResult = new Result<List<ProductDto>>().Fail("Internal Error", HttpStatusCode.InternalServerError);
+    [Fact]
+    public async Task GetAsync_WhenInternalError_ShouldReturnInternalServerError()
+    {
+        var expectedResult =
+            new Result<List<ProductDto>>().Fail("Internal Error", HttpStatusCode.InternalServerError);
 
         _getProductsUseCaseMock
             .Setup(x => x.ExecuteAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResult);
 
-        // Act
-        var result = await _controller.GetAsync(CancellationToken.None);
+        var action = await _controller.GetAsync(CancellationToken.None);
 
-        // Assert
+        action.Should().BeOfType<ObjectResult>()
+            .Which.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+
+        var result = ExtractResult<List<ProductDto>>(action);
+
         result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         result.Message.Should().Be("Internal Error");
-        result.Data.Should().BeNull();
     }
+
 
     [Fact]
     public async Task GetByType_WhenFound_ShouldReturnProducts()
     {
-        // Arrange
-        var productFirst = BuildProductDto("Hamburguer", ProductType.Snack);
-        var productSecond = BuildProductDto("X-Salada", ProductType.Snack);
-        var productThird = BuildProductDto("X-Bacon", ProductType.Snack);
-
-        var products = new List<ProductDto>() { productFirst, productSecond, productThird };
+        var products = new List<ProductDto>
+    {
+        BuildProductDto("Hamburguer", ProductType.Snack),
+        BuildProductDto("X-Salada", ProductType.Snack)
+    };
 
         var expectedResult = new Result<List<ProductDto>>().Ok(products, HttpStatusCode.OK);
-
-        _getProductByTypeUseCaseMock
-            .Setup(x => x.ExecuteAsync(It.IsAny <string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedResult);
-
-        // Act
-        var result = await _controller.GetByTypeAsync("snack",CancellationToken.None);
-
-        // Assert
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Data.Should().NotBeEmpty();
-    }
-
-    [Fact]
-    public async Task GetByType_WhenNotFound_ShouldReturnFail()
-    {
-        var expectedResult = new Result<List<ProductDto>>().Fail("Product not found", HttpStatusCode.NotFound);
 
         _getProductByTypeUseCaseMock
             .Setup(x => x.ExecuteAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResult);
 
-        // Act
-        var result = await _controller.GetByTypeAsync("snack", CancellationToken.None);
+        var action = await _controller.GetByTypeAsync("snack", CancellationToken.None);
 
-        // Assert
+        var objectResult = action.Should().BeAssignableTo<ObjectResult>().Subject;
+
+        var result = ExtractResult<List<ProductDto>>(action);
+
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Data.Should().NotBeEmpty();
+    }
+
+
+    [Fact]
+    public async Task GetByType_WhenNotFound_ShouldReturnNotFound()
+    {
+        var expectedResult =
+            new Result<List<ProductDto>>().Fail("Product not found", HttpStatusCode.NotFound);
+
+        _getProductByTypeUseCaseMock
+            .Setup(x => x.ExecuteAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedResult);
+
+        var action = await _controller.GetByTypeAsync("snack", CancellationToken.None);
+
+        var objectResult = action.Should()
+            .BeAssignableTo<ObjectResult>()
+            .Subject;
+
+        var result = ExtractResult<List<ProductDto>>(action);
+
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         result.Data.Should().BeNull();
     }
 
+
     [Fact]
     public async Task PostAsync_WhenInsert_ShouldReturnProduct()
     {
-        var images = new List<ImageProductDto>
-        {
-             new ImageProductDto(1, "https://example.com/front.png"),
-             new ImageProductDto(2, "https://example.com/back.png")
-        };
-        var ingredients = new List<string>() { "pão", "hamburguer", "queijo" };
-        var productDto = new SnackDto() { Name = "x-burger", Price = 12, IsActive = true, Images = images, Ingredients = ingredients };
+        var productDto = BuildProductDto("x-burger", ProductType.Snack);
 
-        var expectedResult = new Result<ProductDto>().Ok(productDto, HttpStatusCode.OK);
+        var expectedResult =
+            new Result<ProductDto>().Ok(productDto, HttpStatusCode.OK);
 
         _createProductUseCaseMock
             .Setup(x => x.ExecuteAsync(It.IsAny<ProductDto>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResult);
 
-        var result = await _controller.PostAsync(CancellationToken.None, productDto);
+        var action = await _controller.PostAsync(CancellationToken.None, productDto);
+
+        var objectResult = action.Should().BeAssignableTo<ObjectResult>().Subject;
+
+        var result = ExtractResult<ProductDto>(action);
 
         result.StatusCode.Should().Be(HttpStatusCode.OK);
         result.Data.Should().NotBeNull();
     }
 
+
     [Fact]
     public async Task GetByIdsAsync_WhenFoundProducts_ShouldReturnOk()
     {
-        // Arrange
-        var productsIds = new List<string> { "123", "213" };
+        var ids = new List<string> { "123", "213" };
 
         var products = new List<ProductDto>
     {
@@ -209,20 +250,23 @@ public class ProductsControllerTests
         new DrinkDto { Id = "213", Name = "Coke" }
     };
 
-        var expectedResult =new Result<List<ProductDto>>().Ok(products, HttpStatusCode.OK);
+        var expectedResult =
+            new Result<List<ProductDto>>().Ok(products, HttpStatusCode.OK);
 
         _getActiveProductsByIdsUseCaseMock
-            .Setup(x => x.ExecuteAsync(productsIds, It.IsAny<CancellationToken>()))
+            .Setup(x => x.ExecuteAsync(ids, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResult);
 
-        // Act
-        var result = await _controller.GetActiveByIdsAsync(productsIds, CancellationToken.None);
+        var action = await _controller.GetActiveByIdsAsync(ids, CancellationToken.None);
 
-        // Assert
+        var objectResult = action.Should().BeAssignableTo<ObjectResult>().Subject;
+
+        var result = ExtractResult<List<ProductDto>>(action);
+
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Data.Should().NotBeNull();
         result.Data.Should().HaveCount(2);
     }
+
 
     private ProductDto BuildProductDto(string name, ProductType type)
     {
@@ -245,4 +289,15 @@ public class ProductsControllerTests
 
         return dto;
     }
+
+    static Result<T> ExtractResult<T>(IActionResult actionResult)
+    {
+        var objectResult = actionResult as ObjectResult;
+        objectResult.Should().NotBeNull();
+
+        return objectResult!.Value.Should()
+            .BeOfType<Result<T>>()
+            .Subject;
+    }
+
 }

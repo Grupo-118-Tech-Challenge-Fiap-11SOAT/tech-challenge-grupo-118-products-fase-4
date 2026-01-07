@@ -1,6 +1,7 @@
 ﻿using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.UseCases.Interfaces;
+using Products.Domain.Common.Exceptions;
 using Products.Domain.Entities;
 using Products.Infra.DataBase.Repositories.Interfaces;
 using System.Net;
@@ -46,9 +47,16 @@ public class GetActiveProductsByIdsUseCase : IGetActiveProductsByIdsUseCase
                 response.Add(dto);
             }
 
-            return result.Ok(response, HttpStatusCode.OK);
+            if (response.Count > 0)
+                return result.Ok(response, HttpStatusCode.OK);
+
+            return result.Fail("Product not found", HttpStatusCode.NotFound);
         }
-        catch (Exception)
+        catch (InvalidObjectIdException ex)
+        {
+            return result.Fail(ex.Message, HttpStatusCode.BadRequest);
+        }
+        catch (Exception ex)
         {
             return result.Fail("Internal Error", HttpStatusCode.InternalServerError);
         }
