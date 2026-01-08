@@ -6,12 +6,14 @@ using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.UseCases.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Products.Api.Controllers
 {
     /// <summary>
     /// Controller responsible for managing products.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     [ApiController]
     [Route("[controller]")]
     public class ProductsController : ControllerBase
