@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Products.Application.Common.Models;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace Products.Api.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class ControllerResultExtensions
 {
     public static IActionResult ToActionResult<T>(
