@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Products.Api.Examples;
+using Products.Api.Extensions;
 using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.UseCases.Interfaces;
@@ -50,7 +51,7 @@ namespace Products.Api.Controllers
             [FromBody] ProductDto productDto)
         {
             var result = await _createProductUseCase.ExecuteAsync(productDto, cancellationToken);
-            return StatusCode((int)result.StatusCode, result);
+            return this.ToActionResult(result);
         }
 
         /// <summary>
@@ -66,7 +67,7 @@ namespace Products.Api.Controllers
         public async Task<IActionResult> GetByIdAsync(string productId, CancellationToken cancellationToken)
         {
             var result = await _getProductByIdUseCase.ExecuteAsync(productId, cancellationToken);
-            return StatusCode((int)result.StatusCode, result);
+            return this.ToActionResult(result);
         }
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace Products.Api.Controllers
         public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
         {
             var result = await _getProductsUseCase.ExecuteAsync(cancellationToken);
-            return StatusCode((int)result.StatusCode, result);
+            return this.ToActionResult(result);
         }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace Products.Api.Controllers
             CancellationToken cancellationToken)
         {
             var result = await _getProductByTypeUseCase.ExecuteAsync(category, cancellationToken);
-            return StatusCode((int)result.StatusCode, result);
+            return this.ToActionResult(result);
         }
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace Products.Api.Controllers
         public async Task<IActionResult> GetActiveByIdsAsync([FromBody] List<string> ids, CancellationToken cancellationToken)
         {
             var result = await _getActiveProductByIdsUseCase.ExecuteAsync(ids, cancellationToken);
-            return StatusCode((int)result.StatusCode, result);
+            return this.ToActionResult(result);
         }
     }
 }
