@@ -13,9 +13,9 @@ namespace Products.Api.Controllers
     /// <summary>
     /// Controller responsible for managing products.
     /// </summary>
-    [ExcludeFromCodeCoverage]
     [ApiController]
     [Route("[controller]")]
+    [ExcludeFromCodeCoverage]
     public class ProductsController : ControllerBase
     {
         private readonly ILogger<ProductsController> _logger;
