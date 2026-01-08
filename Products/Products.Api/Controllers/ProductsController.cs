@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Products.Api.Examples;
+using Products.Api.Extensions;
 using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.UseCases.Interfaces;
 using Swashbuckle.AspNetCore.Filters;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Products.Api.Controllers
 {
@@ -13,6 +15,7 @@ namespace Products.Api.Controllers
     /// </summary>
     [ApiController]
     [Route("[controller]")]
+    [ExcludeFromCodeCoverage]
     public class ProductsController : ControllerBase
     {
         private readonly ILogger<ProductsController> _logger;
@@ -46,11 +49,11 @@ namespace Products.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [SwaggerRequestExample(typeof(ProductDto), typeof(ProductsExample))]
         [HttpPost]
-        public async Task<Result<ProductDto>> PostAsync(CancellationToken cancellationToken,
+        public async Task<IActionResult> PostAsync(CancellationToken cancellationToken,
             [FromBody] ProductDto productDto)
         {
             var result = await _createProductUseCase.ExecuteAsync(productDto, cancellationToken);
-            return result;
+            return this.ToActionResult(result);
         }
 
         /// <summary>
@@ -63,10 +66,10 @@ namespace Products.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpGet("{productId}"), ActionName("GetDetailedProduct")]
         [AllowAnonymous]
-        public async Task<Result<ProductDto?>> GetByIdAsync(string productId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetByIdAsync(string productId, CancellationToken cancellationToken)
         {
             var result = await _getProductByIdUseCase.ExecuteAsync(productId, cancellationToken);
-            return result;
+            return this.ToActionResult(result);
         }
 
         /// <summary>
@@ -78,10 +81,10 @@ namespace Products.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpGet]
         [AllowAnonymous]
-        public async Task<Result<List<ProductDto>>> GetAsync(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAsync(CancellationToken cancellationToken)
         {
             var result = await _getProductsUseCase.ExecuteAsync(cancellationToken);
-            return result;
+            return this.ToActionResult(result);
         }
 
         /// <summary>
@@ -95,11 +98,11 @@ namespace Products.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpGet("category/{category}")]
         [AllowAnonymous]
-        public async Task<Result<List<ProductDto>?>> GetByTypeAsync(string category,
+        public async Task<IActionResult> GetByTypeAsync(string category,
             CancellationToken cancellationToken)
         {
             var result = await _getProductByTypeUseCase.ExecuteAsync(category, cancellationToken);
-            return result;
+            return this.ToActionResult(result);
         }
 
         /// <summary>
@@ -112,10 +115,10 @@ namespace Products.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [HttpPost("active/by-ids")]
         [AllowAnonymous]
-        public async Task<Result<List<ProductDto>>> GetActiveByIdsAsync([FromBody] List<string> ids, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetActiveByIdsAsync([FromBody] List<string> ids, CancellationToken cancellationToken)
         {
             var result = await _getActiveProductByIdsUseCase.ExecuteAsync(ids, cancellationToken);
-            return result;
+            return this.ToActionResult(result);
         }
     }
 }

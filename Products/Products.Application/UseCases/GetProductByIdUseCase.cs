@@ -1,6 +1,7 @@
 ﻿using Products.Application.Common.Models;
 using Products.Application.Dtos;
 using Products.Application.UseCases.Interfaces;
+using Products.Domain.Common.Exceptions;
 using Products.Domain.Entities;
 using Products.Infra.DataBase.Repositories.Interfaces;
 using System.Net;
@@ -45,6 +46,10 @@ public class GetProductByIdUseCase : IGetProductByIdUseCase
             };
 
             return result.Ok(dto, HttpStatusCode.OK);
+        }
+        catch (InvalidObjectIdException ex)
+        {
+            return result.Fail(ex.Message, HttpStatusCode.BadRequest);
         }
         catch (Exception)
         {

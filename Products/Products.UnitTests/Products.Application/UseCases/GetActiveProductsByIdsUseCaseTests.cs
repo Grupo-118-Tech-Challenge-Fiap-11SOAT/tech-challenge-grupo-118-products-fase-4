@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using Moq;
 using Products.Application.Dtos;
 using Products.Application.UseCases;
+using Products.Domain.Common.Exceptions;
 using Products.Domain.Entities;
 using Products.Infra.DataBase.Repositories.Interfaces;
 using System.Net;
@@ -61,9 +62,7 @@ public class GetActiveProductsByIdsUseCaseTests
         var result = await _useCase.ExecuteAsync(ids);
 
         // Assert
-        result.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Data.Should().NotBeNull();
-        result.Data.Should().BeEmpty();
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -82,6 +81,25 @@ public class GetActiveProductsByIdsUseCaseTests
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         result.Message.Should().Be("Internal Error");
+        result.Data.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenInvalidObjectId_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var ids = new List<string> { "1" };
+
+        _productRepositoryMock
+            .Setup(x => x.GetActiveProductsByIdsAsync(ids, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidObjectIdException("Invalid ObjectId: Invalid id"));
+
+        // Act
+        var result = await _useCase.ExecuteAsync(ids, CancellationToken.None);
+
+        // Assert
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        result.Message.Should().Contain("Invalid id");
         result.Data.Should().BeNull();
     }
 }
