@@ -2,6 +2,7 @@
 using Products.Application.Common.Models;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using Products.Application.Dtos;
 
 namespace Products.Api.Extensions;
 
@@ -17,9 +18,13 @@ public static class ControllerResultExtensions
             HttpStatusCode.OK => controller.Ok(result),
             HttpStatusCode.NotFound => controller.NotFound(result),
             HttpStatusCode.BadRequest => controller.BadRequest(result),
+            HttpStatusCode.Created => result.Data is ProductDto product
+                ? controller.CreatedAtAction(actionName: "GetDetailedProduct", controllerName: "Products",
+                    new { productId = product.Id }, product)
+                : controller.Created(string.Empty, result),
             _ => controller.StatusCode(
-                    (int)HttpStatusCode.InternalServerError,
-                    result)
+                (int)HttpStatusCode.InternalServerError,
+                result)
         };
     }
 }
