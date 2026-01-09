@@ -6,7 +6,7 @@ API responsável pelo cadastro e gerenciamento de produtos, utilizando .NET, Mon
 
 ## Cobertura de Código
 
-![Code Coverage - Products](Code%20Coverage%20-%20Products.png)
+![Code Coverage](Code%20Coverage%20-%20Products.png)
 
 ## 🚀 Visão Geral
 
