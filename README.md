@@ -4,6 +4,10 @@ API responsável pelo cadastro e gerenciamento de produtos, utilizando .NET, Mon
 
 ---
 
+## Cobertura de Código
+
+![Code Coverage - Products](Code%20Coverage%20-%20Products.png)
+
 ## 🚀 Visão Geral
 
 A API trabalha com o conceito de **Produto**, que pode assumir diferentes tipos. Cada tipo herda de um DTO base (`ProductDto`) e é identificado através da propriedade **`type`** no JSON.
