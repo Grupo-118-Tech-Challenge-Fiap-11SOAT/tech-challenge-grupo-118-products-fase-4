@@ -39,6 +39,8 @@ public class CreateProductUseCase : ICreateProductUseCase
 
             await _productRepository.CreateProductAsync(product);
 
+            productDto.Id = product.Id.ToString();
+            
             return result.Ok(productDto, HttpStatusCode.Created);
         }
         catch (Exception ex)
